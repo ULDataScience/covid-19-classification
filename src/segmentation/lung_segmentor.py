@@ -43,28 +43,24 @@ class LungSegmenter():
                  ):
         """Construct a new LungSegmentor.
 
-        Constructor for LungSegmentor
+        Constructor for LungSegmentor ...
+        TODO
         """
-        try:
-            if model_file_path is None:
-                raise FileNotFoundError('model_file_path cannot be None!')
-            if model_file_path == '':
-                raise FileNotFoundError(
-                    'model_file_path cannot be an empty String!')
-            if not path.exists(model_file_path):
-                raise FileNotFoundError(
-                    '{} cannot be found!'.format(model_file_path))
-            self.u_net = load_model(model_file_path)
-            self.mask_binarization_treshold = mask_binarization_treshold
-            self.morphology_kernel_size = morphology_kernel_size
-            self.dilation_kernel_size = dilation_kernel_size
-            self.dilation_iterations = dilation_iterations
-            self.input_dimension = tuple(
-                squeeze(self.u_net.layers[0].input_shape, axis=0)[1:3])
-        except FileNotFoundError as fnfe:
-            print(fnfe)
-        except IOError as ioe:
-            print(ioe)
+        if model_file_path is None:
+            raise FileNotFoundError('model_file_path cannot be None!')
+        if model_file_path == '':
+            raise FileNotFoundError(
+                'model_file_path cannot be an empty String!')
+        if not path.exists(model_file_path):
+            raise FileNotFoundError(
+                '{} cannot be found!'.format(model_file_path))
+        self.u_net = load_model(model_file_path)
+        self.mask_binarization_treshold = mask_binarization_treshold
+        self.morphology_kernel_size = morphology_kernel_size
+        self.dilation_kernel_size = dilation_kernel_size
+        self.dilation_iterations = dilation_iterations
+        self.input_dimension = tuple(
+            squeeze(self.u_net.layers[0].input_shape, axis=0)[1:3])
 
     def mask(self, file_path):
         """Return the file path of the masked X-Ray image.
@@ -73,41 +69,36 @@ class LungSegmenter():
         saves the mask and the masked image in the same
         folder as the original X-Ray image
         """
-        try:
-            if file_path is None:
-                raise FileNotFoundError('file_path cannot be None!')
-            if file_path == '':
-                raise FileNotFoundError('file_path cannot be an empty String!')
-            if not path.exists(file_path):
-                raise FileNotFoundError(
-                    '{} cannot be found!'.format(file_path))
-            dot_index = file_path.rfind('.')
-            masked_image_file_path = '{}{}{}'.format(
-                file_path[:dot_index], '_masked', file_path[dot_index:])
-            mask_file_path = '{}{}{}'.format(
-                file_path[:dot_index], '_mask', file_path[dot_index:])
-            original_image = imread(file_path, 0).astype(float32)/255.0
-            original_image_size = original_image.shape[::-1]
+        if file_path is None:
+            raise FileNotFoundError('file_path cannot be None!')
+        if file_path == '':
+            raise FileNotFoundError('file_path cannot be an empty String!')
+        if not path.exists(file_path):
+            raise FileNotFoundError(
+                '{} cannot be found!'.format(file_path))
+        dot_index = file_path.rfind('.')
+        masked_image_file_path = '{}{}{}'.format(
+            file_path[:dot_index], '_masked', file_path[dot_index:])
+        mask_file_path = '{}{}{}'.format(
+            file_path[:dot_index], '_mask', file_path[dot_index:])
+        original_image = imread(file_path, 0).astype(float32)/255.0
+        original_image_size = original_image.shape[::-1]
 
-            downsized_image = resize(
-                original_image, dsize=self.input_dimension, interpolation=INTER_CUBIC)
-            downsized_image = expand_dims(downsized_image, axis=0)
-            downsized_image = per_image_standardization(downsized_image)
+        downsized_image = resize(
+            original_image, dsize=self.input_dimension, interpolation=INTER_CUBIC)
+        downsized_image = expand_dims(downsized_image, axis=0)
+        downsized_image = per_image_standardization(downsized_image)
 
-            mask_prediction = self.u_net.predict(downsized_image)
+        mask_prediction = self.u_net.predict(downsized_image)
 
-            mask = mask_prediction > self.mask_binarization_treshold
-            mask = self.__remove_small_regions_and_dilate(mask)
-            upsized_mask = resize(squeeze(mask).astype(
-                float32), dsize=original_image_size, interpolation=INTER_CUBIC)
-            masked_image = self.__mask_image(original_image, upsized_mask)
-            imwrite(mask_file_path, upsized_mask*255)
-            imwrite(masked_image_file_path, masked_image*255)
-            return masked_image_file_path
-        except FileNotFoundError as fnfe:
-            print(fnfe)
-        except IOError as ioe:
-            print(ioe)
+        mask = mask_prediction > self.mask_binarization_treshold
+        mask = self.__remove_small_regions_and_dilate(mask)
+        upsized_mask = resize(squeeze(mask).astype(
+            float32), dsize=original_image_size, interpolation=INTER_CUBIC)
+        masked_image = self.__mask_image(original_image, upsized_mask)
+        imwrite(mask_file_path, upsized_mask*255)
+        imwrite(masked_image_file_path, masked_image*255)
+        return masked_image_file_path
 
     def mask_batch(self, dataframe, file_path_column_name='file_path'):
         """Return a new dataframe with paths to masked files.
@@ -116,24 +107,19 @@ class LungSegmenter():
         a new dataframe with a new column (masked_{file_path_column_name})
         which holds file_paths to the masked lung images.
         """
-        try:
-            if dataframe is None:
-                raise AttributeError('dataframe cannot be None!')
-            if file_path_column_name == '':
-                raise AttributeError(
-                    'file_path_column_name cannot be an empty String!')
-            if file_path_column_name is None:
-                raise AttributeError('file_path_column_name cannot be None!')
-            masked_file_paths = []
-            for file_path in dataframe[file_path_column_name]:
-                masked_file_paths.append(self.mask(file_path))
-            dataframe.insert(1, 'masked_{}'.format(
-                file_path_column_name), masked_file_paths)
-            return dataframe
-        except FileNotFoundError as fnfe:
-            print(fnfe)
-        except IOError as ioe:
-            print(ioe)
+        if dataframe is None:
+            raise AttributeError('dataframe cannot be None!')
+        if file_path_column_name == '':
+            raise AttributeError(
+                'file_path_column_name cannot be an empty String!')
+        if file_path_column_name is None:
+            raise AttributeError('file_path_column_name cannot be None!')
+        masked_file_paths = []
+        for file_path in dataframe[file_path_column_name]:
+            masked_file_paths.append(self.mask(file_path))
+        dataframe.insert(1, 'masked_{}'.format(
+            file_path_column_name), masked_file_paths)
+        return dataframe
 
     def __mask_image(self, image, mask):
         """Return masked X-Ray image."""
