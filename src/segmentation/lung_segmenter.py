@@ -1,4 +1,4 @@
-"""LungSegmentor, which creates masks for lungs from X-Ray Images."""
+"""LungSegmenter, which creates masks for lungs from X-Ray Images."""
 
 from os import path
 
@@ -41,9 +41,9 @@ class LungSegmenter():
                  dilation_kernel_size=(2, 2),
                  dilation_iterations=3
                  ):
-        """Construct a new LungSegmentor.
+        """Construct a new LungSegmenter.
 
-        Constructor for LungSegmentor ...
+        Constructor for LungSegmenter ...
         TODO
         """
         if model_file_path is None:
