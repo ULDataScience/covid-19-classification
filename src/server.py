@@ -90,8 +90,6 @@ config = {
   }
 }
 
-
-# load classification modek
 model = load_model(args.model_path)
 
 # create instances of classification, segementation
@@ -148,47 +146,44 @@ def start_thread(fnc, message_prefix, image_path, image_id):
 
 active_treads = []
 
-while True or False:
-    sys.stdout.flush()
-    data = sys.stdin.readline()
-    if len(data):
-      # parse user input
-      user_input = str(data).strip().split(' ', 1)
-      if len(user_input) > 1:
-        image_path = os.path.join(
-            args.cache_dir_path,
-            user_input[1] + '.png'
-        )
+while len(data := sys.stdin.readline()):
+  sys.stdout.flush()
 
-        if user_input[0] == "explain_lime":
-          active_treads.append(
-            start_thread(
-                explain_lime,
-                user_input[0] + " " + user_input[1],
-                image_path,
-                user_input[1]
-            )
-          )
-        elif user_input[0] == "explain_gradcam":
-          active_treads.append(
-            start_thread(
-                explain_gradcam,
-                user_input[0] + " " + user_input[1],
-                image_path,
-                user_input[1]
-            )
-          )
-        elif user_input[0] == "classify":
-          active_treads.append(
-            start_thread(
-                classify,
-                user_input[0] + " " + user_input[1],
-                image_path,
-                user_input[1]
-            )
-          )
-    else:
-      break
+  # parse user input
+  user_input = str(data).strip().split(' ', 1)
+  if len(user_input) > 1:
+    image_path = os.path.join(
+        args.cache_dir_path,
+        user_input[1] + '.png'
+    )
+
+    if user_input[0] == "explain_lime":
+      active_treads.append(
+        start_thread(
+            explain_lime,
+            user_input[0] + " " + user_input[1],
+            image_path,
+            user_input[1]
+        )
+      )
+    elif user_input[0] == "explain_gradcam":
+      active_treads.append(
+        start_thread(
+            explain_gradcam,
+            user_input[0] + " " + user_input[1],
+            image_path,
+            user_input[1]
+        )
+      )
+    elif user_input[0] == "classify":
+      active_treads.append(
+        start_thread(
+            classify,
+            user_input[0] + " " + user_input[1],
+            image_path,
+            user_input[1]
+        )
+      )
 
 # Wait for each remaining active thread to stop
 for thread in active_treads:
