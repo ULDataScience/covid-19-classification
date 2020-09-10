@@ -1,5 +1,6 @@
 from os import path
 
+
 class SegmentationClassifier:
     """
     Orchestrates lung segmentation and classification

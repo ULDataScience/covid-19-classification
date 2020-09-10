@@ -1,10 +1,12 @@
-from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall, AUC
-from tensorflow_addons.metrics import F1Score
-import numpy as np
-from keras.preprocessing import image
-from tensorflow.image import per_image_standardization
-
 from os import path
+
+import numpy as np
+from tensorflow.image import per_image_standardization
+from tensorflow.keras.metrics import (AUC, CategoricalAccuracy, Precision,
+                                      Recall)
+from tensorflow.keras.preprocessing import image
+from tensorflow_addons.metrics import F1Score
+
 
 class Classfier():
     """
