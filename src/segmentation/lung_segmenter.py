@@ -41,11 +41,6 @@ class LungSegmenter():
                  dilation_kernel_size=(2, 2),
                  dilation_iterations=3
                  ):
-        """Construct a new LungSegmenter.
-
-        Constructor for LungSegmenter ...
-        TODO
-        """
         if model_file_path is None:
             raise FileNotFoundError('model_file_path cannot be None!')
         if model_file_path == '':
@@ -76,6 +71,7 @@ class LungSegmenter():
         if not path.exists(file_path):
             raise FileNotFoundError(
                 '{} cannot be found!'.format(file_path))
+
         dot_index = file_path.rfind('.')
         masked_image_file_path = '{}{}{}'.format(
             file_path[:dot_index], '_masked', file_path[dot_index:])
@@ -96,8 +92,9 @@ class LungSegmenter():
         upsized_mask = resize(squeeze(mask).astype(
             float32), dsize=original_image_size, interpolation=INTER_CUBIC)
         masked_image = self.__mask_image(original_image, upsized_mask)
-        imwrite(mask_file_path, upsized_mask*255)
-        imwrite(masked_image_file_path, masked_image*255)
+        if not path.exists(masked_image_file_path):
+            imwrite(mask_file_path, upsized_mask*255)
+            imwrite(masked_image_file_path, masked_image*255)
         return masked_image_file_path
 
     def mask_batch(self, dataframe, file_path_column_name='file_path'):
