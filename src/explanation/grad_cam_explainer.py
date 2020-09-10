@@ -1,17 +1,16 @@
 import os
 
-from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall, AUC
-from tensorflow_addons.metrics import F1Score
-import tensorflow as tf
-
-from tensorflow.keras.preprocessing.image import img_to_array
-import numpy as np
 import cv2
-import os
 import numpy as np
-from keras.preprocessing import image
+import tensorflow as tf
 from skimage.io import imsave
 from tensorflow.image import per_image_standardization
+from tensorflow.keras.metrics import (AUC, CategoricalAccuracy, Precision,
+                                      Recall)
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow_addons.metrics import F1Score
+
 
 class GradCAMExplainer():
     """
@@ -62,7 +61,6 @@ class GradCAMExplainer():
         """
         orig_img = image.load_img(image_path, target_size = self.image_size)
         orig_img = np.asarray(orig_img, dtype=np.float64)
-
         
         orig_img = np.expand_dims(orig_img, axis = 0)
         
@@ -112,7 +110,7 @@ class GradCAMExplainer():
         :return: List of paths of explained images
         """
         return [
-            self.explain(image_path[0], image_path[1]) if isinstance(image_paths, tuple) else self.explain(image_path)
+            self.explain(image_path[0], image_path[1]) if isinstance(image_path, tuple) else self.explain(image_path)
             for image_path in image_paths
         ]
 
@@ -203,4 +201,3 @@ class GradCAMExplainer():
         # otherwise, we could not find a 4D layer so the GradCAM
         # algorithm cannot be applied
         raise ValueError("Could not find 4D layer. Cannot apply GradCAM.") 
-    

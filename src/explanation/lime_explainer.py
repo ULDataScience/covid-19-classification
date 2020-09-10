@@ -1,10 +1,11 @@
 import os
+
 import numpy as np
-from keras.preprocessing import image
 from lime.lime_image import *
 from skimage.io import imsave
 from skimage.segmentation import mark_boundaries
 from tensorflow.image import per_image_standardization
+from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
@@ -115,7 +116,7 @@ class LimeExplainer():
     :return: List of paths of explained images
     """
     return [
-        self.explain(image_path[0], image_path[1]) if isinstance(image_paths, tuple) else self.explain(image_path)
+        self.explain(image_path[0], image_path[1]) if isinstance(image_path, tuple) else self.explain(image_path)
         for image_path in image_paths
     ]
       
