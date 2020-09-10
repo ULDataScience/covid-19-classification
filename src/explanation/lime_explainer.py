@@ -37,7 +37,11 @@ class LimeExplainer():
         feature_selection,
         num_features = 1000,
         num_samples = 1000,
-        explanation_prefix='explanation_'
+        explanation_prefix='explanation_',
+        kernel_size=2.25,
+        max_dist=50,
+        ratio=0.1,
+        sigma=0.15
     ):
     
     self.model = model
@@ -51,6 +55,10 @@ class LimeExplainer():
       feature_selection=self.FEATURE_SELECTION
     )
     self.explanation_prefix = explanation_prefix
+    self.kernel_size = kernel_size
+    self.max_dist = max_dist
+    self.ratio = ratio
+    self.sigma = sigma
 
   def explain(self, image_path, display_image_path=None):
     """Return the file path of the explain X-Ray image classification.
@@ -157,10 +165,10 @@ class LimeExplainer():
     # Algorithm for superpixel segmentation. Parameters set to limit size of superpixels and promote border smoothness
     segmentation_fn = SegmentationAlgorithm(
         'quickshift',
-        kernel_size=2.25,
-        max_dist=50,
-        ratio=0.1,
-        sigma=0.15
+        kernel_size=self.kernel_size,
+        max_dist=self.max_dist,
+        ratio=self.ratio,
+        sigma=self.sigma
     )
     # Generate explanation for the example
     x = np.asarray(x)

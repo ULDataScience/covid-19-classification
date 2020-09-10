@@ -31,13 +31,15 @@ class GradCAMExplainer():
         model,
         inner_model=None,
         layer_name=None,
-        explanation_prefix='explanation_'
+        explanation_prefix='explanation_',
+        eps=1e-8
         ):
 
         self.model = model
         self.classIdx = None
         self.inner_model = inner_model
         self.image_size = (331, 331)
+        self.eps = eps
         if self.inner_model == None:
             self.inner_model = model
         self.layer_name = layer_name 
@@ -70,7 +72,7 @@ class GradCAMExplainer():
         orig_img = img_to_array(orig_img)
         
         # create explanation
-        heatmap = self.__compute_heatmap(standardized_img)
+        heatmap = self.__compute_heatmap(standardized_img, eps=self.eps)
         heatmap = cv2.resize(heatmap, self.image_size)
         heatmap = cv2.resize(heatmap, orig_img.shape[1::-1])
 
