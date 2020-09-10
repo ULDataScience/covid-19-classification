@@ -113,7 +113,8 @@ def explain_lime(message_prefix, image_path, image_id):
       lime_explainer.explain(
         lung_segmenter.mask(image_path),
         image_path
-      )
+      ),
+      flush=True
   )
 
 def explain_gradcam(message_prefix, image_path, image_id):
@@ -122,13 +123,15 @@ def explain_gradcam(message_prefix, image_path, image_id):
       gradcam_explainer.explain(
         lung_segmenter.mask(image_path),
         image_path
-      )
+      ),
+      flush=True
   )
 
 def classify(message_prefix, image_path, image_id):
   print(
       message_prefix, 
-      json.dumps(segmentation_classifier.classify(image_path))
+      json.dumps(segmentation_classifier.classify(image_path)),
+      flush=True
   )
 
 
