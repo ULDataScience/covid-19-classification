@@ -40,8 +40,9 @@ const cache = !args.disable_api_cache
   : (req, res, next) => { next() }
 
 const { spawn } = require('child_process')
+const path = require('path')
 const serverProcess = spawn('python', [
-  'server.py',
+  path.join(__dirname, 'server.py'),
   '-c',
   args.model_path,
   '-s',
@@ -51,7 +52,6 @@ const serverProcess = spawn('python', [
 ])
 const uuidv4 = require('uuid').v4
 const md5 = require('md5')
-const path = require('path')
 const fs = require('fs')
 
 process.on('exit', (code) => {
