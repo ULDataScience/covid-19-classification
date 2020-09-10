@@ -149,14 +149,14 @@ app.get('/v1/explainer/gradcam/:id', cache, (req, res) => {
   const id = req.params.id
   console.log('explaining_gradcam', id)
   execute('explain_gradcam', id).then(result => {
-    res.sendFile(path.join(__dirname, result))
+    res.sendFile(path.join(process.cwd(), result))
   })
 })
 app.get('/v1/explainer/lime/:id', cache, (req, res) => {
   const id = req.params.id
   console.log('explaining_lime', id)
   execute('explain_lime', id).then(result => {
-    res.sendFile(path.join(__dirname, result))
+    res.sendFile(path.join(process.cwd(), result))
   })
 })
 
