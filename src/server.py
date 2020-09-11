@@ -77,9 +77,9 @@ from classification.segmentation_classifier import SegmentationClassifier
 config = {
   'DATA': {
     'CLASSES': [
-      'NO FINDING',
-      'COVID-19'
-    ]    
+      'COVID-19',
+      'NO FINDING'
+    ]   
   },
   'LIME': {
     'KERNEL_WIDTH': 4,
