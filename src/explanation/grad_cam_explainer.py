@@ -32,11 +32,12 @@ class GradCAMExplainer():
         inner_model=None,
         layer_name=None,
         explanation_prefix='explanation_',
-        eps=1e-8
+        eps=1e-8,
+        classIdx=None
         ):
 
         self.model = model
-        self.classIdx = None
+        self.classIdx = classIdx
         self.inner_model = inner_model
         self.image_size = (331, 331)
         self.eps = eps
@@ -68,11 +69,14 @@ class GradCAMExplainer():
         
         standardized_img = per_image_standardization(orig_img)
 
+        # predict
+        classIdx = np.argmax(self.model.predict([standardized_img]))
+
         orig_img = np.squeeze(orig_img, axis=0)
         orig_img = img_to_array(orig_img)
         
         # create explanation
-        heatmap = self.__compute_heatmap(standardized_img, eps=self.eps)
+        heatmap = self.__compute_heatmap(standardized_img, eps=self.eps, classIdx=classIdx)
         heatmap = cv2.resize(heatmap, self.image_size)
         heatmap = cv2.resize(heatmap, orig_img.shape[1::-1])
 
@@ -87,8 +91,8 @@ class GradCAMExplainer():
         _, visualization = self.__overlay_heatmap(
             heatmap,
             orig_img,
-            alpha=0.5,
-            colormap=cv2.COLORMAP_INFERNO
+            alpha=0.7,
+            colormap=cv2.COLORMAP_JET
         )
 
         visualization = visualization.astype(np.uint8)
@@ -128,7 +132,7 @@ class GradCAMExplainer():
         # return a 2-tuple of the color mapped heatmap and the output,
         # overlaid image
         return (heatmap, output)
-    def __compute_heatmap(self, image, eps=1e-8):
+    def __compute_heatmap(self, image, eps=1e-8, classIdx=None):
         '''
         Computes heatmap of given image
         :return: heatmap
@@ -154,7 +158,7 @@ class GradCAMExplainer():
             # associated with the specific class index
             inputs = tf.cast(image, tf.float32)
             (convOutputs, predictions) = gradModel(inputs)
-            loss = predictions[:, self.classIdx]
+            loss = predictions[:, classIdx]
         # use automatic differentiation to compute the gradients
         grads = tape.gradient(loss, convOutputs)
 
