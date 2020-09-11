@@ -16,8 +16,12 @@ parser.add_argument('--cache-dir-path', {
   help: 'path to cache dir',
   required: true
 })
+parser.add_argument('--training-dir-path', {
+  help: 'path to training queue dir',
+  required: true
+})
 parser.add_argument('--disable-api-cache', {
-  help: 'path to cache dir',
+  help: 'disable api cache',
   default: false,
   action: 'store_true'
 })
@@ -35,9 +39,24 @@ parser.add_argument('-ip', '--host', {
 })
 
 const args = parser.parse_args()
+const uuidv4 = require('uuid').v4
+const md5 = require('md5')
+const fs = require('fs')
+
 const cache = !args.disable_api_cache
-  ? require('apicache').middleware('5 minutes')
+  ? require('apicache').middleware('50 minutes')
   : (req, res, next) => { next() }
+
+var uploadCache = (req, res, next) => { next() }
+if (!args.disable_api_cache) {
+  const instance = require('apicache').newInstance()
+  instance.options({
+    appendKey: (req, res) => {
+      return req.method + md5(req.body)
+    }
+  })
+  uploadCache = instance.middleware('50 minutes')
+}
 
 const { spawn } = require('child_process')
 const path = require('path')
@@ -50,9 +69,6 @@ const serverProcess = spawn('python', [
   '--cache-dir-path',
   args.cache_dir_path
 ])
-const uuidv4 = require('uuid').v4
-const md5 = require('md5')
-const fs = require('fs')
 
 process.on('exit', (code) => {
   serverProcess.kill()
@@ -93,11 +109,12 @@ var bodyParser = require('body-parser');
 ['png', 'jpg', 'jpeg'].forEach(e => {
   app.use(bodyParser.raw({
     type: 'image/' + e,
-    limit: '10mb'
+    limit: '20mb'
   }))
 })
+app.use(bodyParser.json())
 
-app.post('/v1/classifier', (req, res) => {
+app.post('/v1/classifier', uploadCache, (req, res) => {
   const id = uuidv4()
   const data = req.body
   fs.writeFile(path.join(args.cache_dir_path, id + '.png'), data, err => {
@@ -157,6 +174,42 @@ app.get('/v1/explainer/lime/:id', cache, (req, res) => {
   console.log('explaining_lime', id)
   execute('explain_lime', id).then(result => {
     res.sendFile(path.join(process.cwd(), result))
+  })
+})
+
+const queue = JSON.parse(fs.readFileSync(path.join(__dirname, args.training_dir_path, 'queue.json')))
+app.get('/v1/training/queue', (req, res) => {
+  res.send(queue)
+})
+
+app.get('/v1/training/queue/:id', cache, (req, res) => {
+  const items = queue.filter(item => item.id === req.params.id)
+  if (items.length > 0) {
+    res.send(items[0])
+  } else {
+    res.status(404).send('Queue item not found')
+  }
+})
+
+app.get('/v1/training/queue/:id/image', cache, (req, res) => {
+  res.sendFile(path.join(__dirname, args.training_dir_path, req.params.id + '.png'))
+})
+
+app.post('/v1/training/queue', (req, res) => {
+  const item = req.body
+  item.id = uuidv4()
+  queue.push(item)
+  fs.writeFileSync(path.join(__dirname, args.training_dir_path, 'queue.json'),
+    JSON.stringify(queue, null, 2)
+  )
+  res.send(item)
+})
+app.post('/v1/training/queue/:id/image', (req, res) => {
+  const data = req.body
+  fs.writeFile(path.join(__dirname, args.training_dir_path, req.params.id + '.png'), data, err => {
+    if (!err) {
+      res.send('ok')
+    }
   })
 })
 
