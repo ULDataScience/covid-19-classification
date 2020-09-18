@@ -1,5 +1,9 @@
 # covid-19-classification
 ![Web Interface Screenshot](assets/web-interface-1.png "Web Interface")
+
+## Code Status
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 ## Install
 ```
 pip install -r requirements.txt
