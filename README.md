@@ -1,5 +1,13 @@
 # covid-19-classification
+
+## Code Status
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+## Overview
+This work showcases a binary classifier for chest X-ray images which distinguishes between COVID-19 and no finding (healthy) using a convolutional neural network. Additionally, both LIME- and GradCAM-explainer are integrated into a web interface.
+
 ![Web Interface Screenshot](assets/web-interface-1.png "Web Interface")
+
 ## Install
 ```
 pip install -r requirements.txt
@@ -75,5 +83,4 @@ echo "classify f00091ff-cb7a" | ./src/server.py
 ```
 
 ## Attributions
-
 Icon made by [Freepik](https://www.flaticon.com/de/autoren/freepik) from [www.flaticon.com](https://www.flaticon.com/de/)
