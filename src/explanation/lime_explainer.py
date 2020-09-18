@@ -38,7 +38,7 @@ class LimeExplainer():
         num_features = 1000,
         num_samples = 1000,
         explanation_prefix='explanation_',
-        kernel_size=2.25,
+        kernel_size=2.5,
         max_dist=50,
         ratio=0.1,
         sigma=0.15
