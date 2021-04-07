@@ -177,6 +177,11 @@ app.get('/v1/explainer/lime/:id', cache, (req, res) => {
   })
 })
 
+if (!fs.existsSync(path.join(__dirname, args.training_dir_path, 'queue.json'))) {
+  fs.writeFileSync(path.join(__dirname, args.training_dir_path, 'queue.json'),
+    JSON.stringify([], null, 2)
+  )
+}
 const queue = JSON.parse(fs.readFileSync(path.join(__dirname, args.training_dir_path, 'queue.json')))
 app.get('/v1/training/queue', (req, res) => {
   res.send(queue)
