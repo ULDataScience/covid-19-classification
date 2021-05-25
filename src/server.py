@@ -34,7 +34,7 @@ parser.add_argument(
     '--cache-dir-path',
     required=True,
     dest='cache_dir_path',
-    help='path to segmentation model'
+    help='path to cache dir'
 )
 args = parser.parse_args()
 
