@@ -11,7 +11,7 @@ This work showcases a binary classifier for chest X-ray images which distinguish
 ## Prerequisites
 - ```python3``` and ```node.js```
 - a set of x-ray images
-- a trained model for covid-19 classification (see [Training](##training))
+- a trained model for covid-19 classification (see [Training](#training))
 - a model for segmentation of the lungs (```trained_model.hdf5``` from https://github.com/imlab-uiip/lung-segmentation-2d)
 
 ## Install
@@ -26,7 +26,7 @@ npm install
 
 The training of the classification model is performed from a jupyter notebook. The notebook contains further documentation for the training steps and necessary datasets and models.
 
-See [covid_19_classification.ipynb](./covid_19_classification.ipynb).
+See [training.ipynb](./training.ipynb).
 
 ## Usage
 
