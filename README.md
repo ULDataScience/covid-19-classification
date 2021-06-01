@@ -76,14 +76,17 @@ The frontend is based on react.js.
     ```--training-dir-path```, **required**, contains the path to a training directory. In order to store new training images, which can be uploaded via the web-interface, a directory is needed. The path needs to point to a (arbitrary) writeable directory.<br>
     ```--disable-api-cache```, _optional_, use this flag to disable the api cache. Usually, identical requests (e.g. classification of the same image) are resolved using a cache.<br> 
     ```--api-cache-lifetime```, _optional_, default: _5 minutes_, use this parameter to chance the lifetime of the cache entries.<br>
-    ```--port```, _optional_, default: _3000_, change the port of the api.<br>
+    ```--port```, _optional_, default: _3005_, change the port of the api.<br>
     ```--host```, _optional_, default: _localhost_, change the host of the api.<br>
 2. Start the frontend:
     ```
     cd src/frontend
     npm start
     ```
-
+    The frontend will try to start on port 3000 and forward API requests to ```http://localhost:3005/``` if possible. You can change your proxy path to the actual API host/port in ```frontend/package.json```:
+    ```
+    "proxy": "http://localhost:3005",
+    ```
 ## Python worker interface
 Internally, the ```node.js```-API starts the python worker and organizes the communication. Hence, there is no need to directly access it. However, it can be used to perform a set of classifications and explanations on many images. The interface is structured as follows and the parameters are a subset of the API-parameters. 
 The parameters provide the model files and the actual tasks are provided via stdin.

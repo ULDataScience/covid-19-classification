@@ -31,7 +31,7 @@ parser.add_argument('--api-cache-lifetime', {
 })
 parser.add_argument('-p', '--port', {
   help: 'api port',
-  default: 3000
+  default: 3005
 })
 parser.add_argument('-ip', '--host', {
   help: 'api host',
