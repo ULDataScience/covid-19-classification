@@ -47,7 +47,7 @@ const cache = !args.disable_api_cache
   ? require('apicache').middleware('50 minutes')
   : (req, res, next) => { next() }
 
-var uploadCache = (req, res, next) => { next() }
+let uploadCache = (req, res, next) => { next() }
 if (!args.disable_api_cache) {
   const instance = require('apicache').newInstance()
   instance.options({
@@ -105,7 +105,7 @@ serverProcess.stdout.on('data', data => {
 })
 
 const app = require('express')()
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 ['png', 'jpg', 'jpeg'].forEach(e => {
   app.use(bodyParser.raw({
     type: 'image/' + e,
@@ -177,12 +177,12 @@ app.get('/v1/explainer/lime/:id', cache, (req, res) => {
   })
 })
 
-if (!fs.existsSync(path.join(__dirname, args.training_dir_path, 'queue.json'))) {
-  fs.writeFileSync(path.join(__dirname, args.training_dir_path, 'queue.json'),
+if (!fs.existsSync(path.join(args.training_dir_path, 'queue.json'))) {
+  fs.writeFileSync(path.join(args.training_dir_path, 'queue.json'),
     JSON.stringify([], null, 2)
   )
 }
-const queue = JSON.parse(fs.readFileSync(path.join(__dirname, args.training_dir_path, 'queue.json')))
+const queue = JSON.parse(fs.readFileSync(path.join(args.training_dir_path, 'queue.json')))
 app.get('/v1/training/queue', (req, res) => {
   res.send(queue)
 })
@@ -197,21 +197,21 @@ app.get('/v1/training/queue/:id', cache, (req, res) => {
 })
 
 app.get('/v1/training/queue/:id/image', cache, (req, res) => {
-  res.sendFile(path.join(__dirname, args.training_dir_path, req.params.id + '.png'))
+  res.sendFile(path.join(args.training_dir_path, req.params.id + '.png'))
 })
 
 app.post('/v1/training/queue', (req, res) => {
   const item = req.body
   item.id = uuidv4()
   queue.push(item)
-  fs.writeFileSync(path.join(__dirname, args.training_dir_path, 'queue.json'),
+  fs.writeFileSync(path.join(args.training_dir_path, 'queue.json'),
     JSON.stringify(queue, null, 2)
   )
   res.send(item)
 })
 app.post('/v1/training/queue/:id/image', (req, res) => {
   const data = req.body
-  fs.writeFile(path.join(__dirname, args.training_dir_path, req.params.id + '.png'), data, err => {
+  fs.writeFile(path.join(args.training_dir_path, req.params.id + '.png'), data, err => {
     if (!err) {
       res.send('ok')
     }
