@@ -68,7 +68,7 @@ threadpoolctl==2.1.0
 tifffile==2020.8.13
 tqdm==4.48.2
 typeguard==2.9.1
-urllib3==1.25.10
+urllib3==1.26.5
 Werkzeug==1.0.1
 wrapt==1.12.1
 zipp==3.1.0
