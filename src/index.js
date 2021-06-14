@@ -197,7 +197,12 @@ app.get('/v1/training/queue/:id', cache, (req, res) => {
 })
 
 app.get('/v1/training/queue/:id/image', cache, (req, res) => {
-  res.sendFile(path.join(args.training_dir_path, req.params.id + '.png'))
+  if (!path.isAbsolute(args.training_dir_path)) {
+    console.log(path.join(process.cwd(), args.training_dir_path, req.params.id + '.png'))
+    res.sendFile(path.join(process.cwd(), args.training_dir_path, req.params.id + '.png'))
+  } else {
+    res.sendFile(path.join(args.training_dir_path, req.params.id + '.png'))
+  }
 })
 
 app.post('/v1/training/queue', (req, res) => {
