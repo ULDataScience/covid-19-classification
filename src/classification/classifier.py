@@ -45,10 +45,20 @@ class Classfier():
         img = np.expand_dims(img, axis = 0)
         img = per_image_standardization(img)
         prediction = self.model.predict([img])
-        return {
-            v: prediction[0][k].astype(float)
-            for k, v in enumerate(self.classes)
-        }
+        if len(prediction[0]) > 1:
+            return {
+                v: prediction[0][k].astype(float)
+                for k, v in enumerate(self.classes)
+            }
+        else:
+            return {
+                v: (
+                    prediction[0][0].astype(float)
+                    if v != "COVID-19"
+                    else 1 - prediction[0][0].astype(float)
+                )
+                for k, v in enumerate(self.classes)
+            }
 
     def classify_batch(self, image_paths):
         '''
