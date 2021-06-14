@@ -85,6 +85,7 @@ export default function Main () {
     setSelectedClass(event.target.value)
   }
   const [trainingQueue, setTrainingQueue] = useState([])
+  const [trainingQueueIsLoading, setTrainingQueueIsLoading] = useState(false)
 
   const loadTrainingQueue = () => {
     axios({
@@ -94,8 +95,10 @@ export default function Main () {
       setTrainingQueue(result.data)
     })
   }
-  if (trainingQueue.length < 1) {
+
+  if (!trainingQueueIsLoading) {
     loadTrainingQueue()
+    setTrainingQueueIsLoading(true)
   }
 
   const handleTrainigQueueSubmit = e => {
